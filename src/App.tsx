@@ -1,14 +1,23 @@
-import React, { useState, useCallback } from 'react';
-import { createTheme, ThemeProvider, TextField, CssBaseline } from "@mui/material";
-import { AppBarComponent, SideBar, Menu } from "./components/index"
-import { BrowserRouter } from "react-router-dom";
-import { ROUTES } from "./routers/index";
-import './App.css';
+import React, { useState, useCallback } from "react";
+import { Provider } from "react-redux";
+
+import {
+  createTheme,
+  ThemeProvider,
+  TextField,
+  CssBaseline,
+} from "@mui/material";
+import { AppBarComponent, SideBar, Menu } from "./components/index";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BLOTTER, MAIN, ROUTES, TRADETICKET } from "./routers/index";
+import "./App.css";
+import { Dashboard, Blotter, TradeTicket } from "./features";
+import { store } from "./store";
 
 const App: React.FC = (): JSX.Element => {
   const [themeMode, setThemeMode] = useState<"light" | "dark">("dark");
   const [sideBarToggle, setSideBarToggle] = useState<boolean>(false);
-
+  const navigate = useNavigate();
 
   const theme = createTheme({
     palette: {
@@ -16,7 +25,7 @@ const App: React.FC = (): JSX.Element => {
     },
     typography: {
       fontSize: 14,
-    }
+    },
   });
 
   const handleDrawerToggle = React.useCallback(() => {
@@ -26,30 +35,37 @@ const App: React.FC = (): JSX.Element => {
 
   const onThemeChange = React.useCallback(() => {
     setThemeMode(themeMode === "dark" ? "light" : "dark");
-    // theme change here 
+    // theme change here
   }, [themeMode]);
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppBarComponent
-        handleDrawerOption={handleDrawerToggle}
-        onThemeChange={onThemeChange}
-        isDarkMode={themeMode === "dark"}
-        isDrawerOpen={sideBarToggle}
-      />
+  const menuClickHandler = (link: string) => {
+    navigate(link);
+  };
 
-      <BrowserRouter>
+  return (
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppBarComponent
+          handleDrawerOption={handleDrawerToggle}
+          onThemeChange={onThemeChange}
+          isDarkMode={themeMode === "dark"}
+          isDrawerOpen={sideBarToggle}
+        />
+
         <SideBar
           isOpen={sideBarToggle}
           handleDrawerToggle={handleDrawerToggle}
-          children={<Menu links={ROUTES} />}
+          children={<Menu links={ROUTES} menuClickHandler={menuClickHandler} />}
         />
-      </BrowserRouter>
-    </ThemeProvider>
-
+        <Routes>
+          <Route path={MAIN} element={<Dashboard />} />
+          <Route path={BLOTTER} element={<Blotter />} />
+          <Route path={TRADETICKET} element={<TradeTicket />} />
+        </Routes>
+      </ThemeProvider>
+    </Provider>
   );
 };
-
 
 export default App;

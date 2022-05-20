@@ -11,7 +11,7 @@ const RejectedTrades: React.FC = (): JSX.Element => {
   return (
     <DashboardTile
       title="Rejected Trades"
-      minWidth="69%"
+      minWidth="71.3%"
       isLoading={isFetching}
       isError={isError}
     >

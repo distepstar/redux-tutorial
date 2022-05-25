@@ -1,4 +1,9 @@
 import { XrangePointOptionsObject } from "highcharts";
+
+export interface NewTicketIdResponse {
+  newId: string;
+}
+
 export interface TotalTradesApiResponse {
   totalTrades: number;
 }
